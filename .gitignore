@@ -22,7 +22,8 @@ dist-ssr
 # Backup & large archives
 src 2/
 src 2.zip
-ASSETS/
+/ASSETS/
+!src/**/assets/**
 *.log
 npm-debug.log*
 yarn-debug.log*
