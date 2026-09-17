@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { background: #000; color: #fff; font-family: sans-serif; padding: 20px; }
+    .banner {
+      width: 1200px;
+      height: 200px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      position: relative;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      padding: 32px;
+      box-sizing: border-box;
+    }
+    .text {
+      position: relative;
+      z-index: 2;
+    }
+    h2 { margin: 0 0 8px; font-size: 26px; }
+    p { margin: 0; color: #cbd5e1; font-size: 14px; }
+    
+    /* Option 1: Current cover */
+    .b1 {
+      background: url('/src/assets/STTGDC_Hero_Dark.jpg') no-repeat center right / cover;
+    }
+    
+    /* Option 2: contain with right center and gradient fade */
+    .b2 {
+      background:
+        linear-gradient(to right, #0B011D 0%, #0B011D 35%, rgba(11, 1, 29, 0.8) 55%, transparent 80%),
+        url('/src/assets/STTGDC_Hero_Dark.jpg') no-repeat right center / contain;
+      background-color: #0B011D;
+    }
+
+    /* Option 3: auto 100% with right center */
+    .b3 {
+      background:
+        linear-gradient(to right, #0B011D 0%, #0B011D 30%, rgba(11, 1, 29, 0.75) 50%, transparent 75%),
+        url('/src/assets/STTGDC_Hero_Dark.jpg') no-repeat right center / auto 100%;
+      background-color: #0B011D;
+    }
+  </style>
+</head>
+<body>
+  <h3>Option 1: Current Cover (cut off ribbons)</h3>
+  <div class="banner b1">
+    <div class="text">
+      <h2>Welcome back, Admin!</h2>
+      <p>Unified Operations Portal Administration</p>
+    </div>
+  </div>
+
+  <h3>Option 2: Contain (100% full ribbons visible, crystal clear)</h3>
+  <div class="banner b2">
+    <div class="text">
+      <h2>Welcome back, Admin!</h2>
+      <p>Unified Operations Portal Administration</p>
+    </div>
+  </div>
+
+  <h3>Option 3: Auto 100% Height (seamless fade)</h3>
+  <div class="banner b3">
+    <div class="text">
+      <h2>Welcome back, Admin!</h2>
+      <p>Unified Operations Portal Administration</p>
+    </div>
+  </div>
+</body>
+</html>
