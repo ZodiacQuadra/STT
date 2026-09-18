@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import styles from './AuditLogs.module.scss';
-import { IAuditLog } from '../../../../Types/AuditLogTypes';
-import { getAuditLogs } from '../../../../Service/AuditLogService';
+import { IAuditLog, IActivityLog } from '../../../../Types/AuditLogTypes';
+import { getAuditLogs, getActivityLogs } from '../../../../Service/AuditLogService';
 import * as XLSX from 'xlsx';
 
 export interface IAuditLogsProps {}
@@ -30,8 +30,12 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
   const [exportDateRange, setExportDateRange] = useState<'today' | 'yesterday' | 'last7' | 'last30' | 'all' | 'custom'>('last30');
   const [exportStartDate, setExportStartDate] = useState<string>(todayStr);
   const [exportEndDate, setExportEndDate] = useState<string>(todayStr);
+  const [activeTab, setActiveTab] = useState<'audit' | 'activity'>('audit');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [activityLogs, setActivityLogs] = useState<IActivityLog[]>([]);
+  const [isActivityLoading, setIsActivityLoading] = useState<boolean>(false);
+  const [hasLoadedActivity, setHasLoadedActivity] = useState<boolean>(false);
 
   // ── Refs ───────────────────────────────────────────────────────────────────
   const toastTimerRef = useRef<any>(null);
@@ -54,6 +58,27 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
     } catch (err) {
       console.error('Error loading audit logs:', err);
       setIsLoading(false);
+    }
+  };
+
+  const loadActivityLogs = async (isReload: boolean = false): Promise<void> => {
+    setIsActivityLoading(true);
+    try {
+      const data = await getActivityLogs();
+      setActivityLogs(data);
+      setIsActivityLoading(false);
+      setHasLoadedActivity(true);
+
+      if (isReload) {
+        setShowToast(true);
+        if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = setTimeout(() => {
+          setShowToast(false);
+        }, 3000);
+      }
+    } catch (err) {
+      console.error('Error loading activity logs:', err);
+      setIsActivityLoading(false);
     }
   };
 
@@ -182,14 +207,15 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
 
     end.setHours(23, 59, 59, 999);
 
-    const logsToExport = logs.filter(log => {
+    const logsSource = activeTab === 'audit' ? logs : activityLogs;
+    const logsToExport = logsSource.filter(log => {
       if (!filterByDate) return true;
       const logDate = new Date(log.Timestamp);
       return logDate >= start && logDate <= end;
     });
 
     if (logsToExport.length === 0) {
-      alert('No audit logs found inside the selected date range to export.');
+      alert(`No ${activeTab === 'audit' ? 'audit' : 'activity'} logs found inside the selected date range to export.`);
       return;
     }
 
@@ -204,13 +230,13 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
     }));
 
     const dateSuffix = new Date().toISOString().slice(0, 10);
-    const fileName = `audit_logs_${dateSuffix}`;
+    const fileName = `${activeTab === 'audit' ? 'audit' : 'activity'}_logs_${dateSuffix}`;
 
     if (exportFormat === 'xlsx') {
       try {
         const worksheet = XLSX.utils.json_to_sheet(cleanData);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Audit Logs');
+        XLSX.utils.book_append_sheet(workbook, worksheet, activeTab === 'audit' ? 'Audit Logs' : 'Activity Logs');
         const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
         const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
         const url = window.URL.createObjectURL(blob);
@@ -220,6 +246,7 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
         document.body.removeChild(a); window.URL.revokeObjectURL(url);
       } catch (err) {
         console.error('Failed to generate Excel file:', err);
+        alert('An error occurred while exporting to Excel.');
       }
     } else if (exportFormat === 'csv') {
       try {
@@ -337,7 +364,7 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
           </div>
           <div className={styles.modalBody}>
             <p className={styles.modalSubtitle}>
-              Configure your export, then download a snapshot of the audit logs.
+              Configure your export, then download a snapshot of the selected log sources.
             </p>
             {/* FORMAT */}
             <div className={styles.modalSection}>
@@ -402,7 +429,11 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
   };
 
   // ── Derived State ──────────────────────────────────────────────────────────
-  const filteredLogs = logs.filter(log => {
+  const logsToFilter = activeTab === 'audit' ? logs : activityLogs;
+  const isTabLoading = activeTab === 'audit' ? isLoading : isActivityLoading;
+  const hasData = activeTab === 'audit' ? logs.length > 0 : activityLogs.length > 0;
+
+  const filteredLogs = logsToFilter.filter(log => {
     const matchesSearch =
       log.ActorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       log.EventType.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -436,16 +467,16 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
       {/* ── Header ── */}
       <div className={styles.headerSection}>
         <div className={styles.titleInfo}>
-          <h2>Audit Logs</h2>
-          <p className={styles.subtitle}>Review system configuration and administrative audit logs across the portal.</p>
+          <h2>Audit &amp; Activity Logs</h2>
+          <p className={styles.subtitle}>Review system configuration and user activity logs across the portal.</p>
         </div>
         <div className={styles.actionButtons}>
           <button
             className={styles.btnReload}
-            onClick={() => loadLogs(true)}
-            disabled={isLoading}
+            onClick={() => activeTab === 'audit' ? loadLogs(true) : loadActivityLogs(true)}
+            disabled={isTabLoading}
           >
-            {isLoading ? (
+            {isTabLoading ? (
               <>
                 <span className={styles.spinner} />
                 Loading...
@@ -462,12 +493,36 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
           <button
             className={styles.btnExport}
             onClick={() => setIsExportModalOpen(true)}
-            disabled={isLoading}
+            disabled={isTabLoading}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
             </svg>
             Export Logs
+          </button>
+        </div>
+      </div>
+
+      {/* ── Tabs ── */}
+      <div className={styles.tabRow}>
+        <div className={styles.tabBar}>
+          <button
+            className={`${styles.tabItem} ${activeTab === 'audit' ? styles.active : ''}`}
+            onClick={() => { setActiveTab('audit'); setCurrentPage(1); }}
+          >
+            Audit Logs
+          </button>
+          <button
+            className={`${styles.tabItem} ${activeTab === 'activity' ? styles.active : ''}`}
+            onClick={() => {
+              setActiveTab('activity');
+              setCurrentPage(1);
+              if (!hasLoadedActivity) {
+                void loadActivityLogs(false);
+              }
+            }}
+          >
+            Activity Logs
           </button>
         </div>
       </div>
@@ -482,7 +537,7 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
           </span>
           <input
             type="text"
-            placeholder="Search audit logs..."
+            placeholder={`Search ${activeTab === 'audit' ? 'audit' : 'activity'} logs...`}
             className={styles.searchInput}
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
@@ -510,11 +565,11 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
 
       {/* ── Table Grid ── */}
       <div className={styles.tableCard}>
-        {isLoading && logs.length === 0 ? (
+        {isTabLoading && !hasData ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 300 }}>
             <span className={styles.spinnerDark} />
             <span style={{ marginLeft: 12, color: '#666', fontWeight: 600 }}>
-              Loading audit logs...
+              Loading {activeTab === 'audit' ? 'audit' : 'activity'} logs...
             </span>
           </div>
         ) : (
@@ -542,7 +597,7 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
                 {paginatedLogs.length === 0 ? (
                   <tr>
                     <td colSpan={3} style={{ textAlign: 'center', color: '#888', padding: '40px 0' }}>
-                      No audit logs found matching the filter criteria.
+                      No {activeTab === 'audit' ? 'audit' : 'activity'} logs found matching the filter criteria.
                     </td>
                   </tr>
                 ) : (
@@ -577,7 +632,7 @@ const AuditLogs: React.FC<IAuditLogsProps> = () => {
             </svg>
           </span>
           <span className={styles.toastMessage}>
-            Audit logs reloaded
+            {activeTab === 'audit' ? 'Audit' : 'Activity'} logs reloaded
           </span>
         </div>
       )}
