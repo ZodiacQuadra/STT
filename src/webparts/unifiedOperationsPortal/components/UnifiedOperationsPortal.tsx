@@ -5,7 +5,6 @@ import styles from './UnifiedOperationsPortal.module.scss';
 import type { IUnifiedOperationsPortalProps } from './IUnifiedOperationsPortalProps';
 import { getUserAccess } from '../../../Service/commonService';
 import { UOPUserAccess } from '../../../Types/common';
-import UserManagement from './UserManagement/UserManagement';
 import { writeAuditLog, writeActivityLog } from '../../../Service/AuditLogService';
 import AuditLogs from './AuditLogs/AuditLogs';
 import AdminApplications from './AdminApplications/AdminApplications';
@@ -28,7 +27,7 @@ import {
 import STTGDCLogoFull from '../assets/STTGDC_Logo_Full.png';
 import STTGDCLogoWhite from '../assets/STTGDC_Logo_White.png';
 
-type ViewKey = 'dashboard' | 'applications' | 'profile' | 'user-management' | 'logs';
+type ViewKey = 'dashboard' | 'applications' | 'profile' | 'logs';
 
 const getInitialLoginTime = (): string => {
   let storedLoginTime = sessionStorage.getItem('UOP_Session_LoginTime');
@@ -333,14 +332,6 @@ const UnifiedOperationsPortal: React.FC<IUnifiedOperationsPortalProps> = (props)
           </svg>
         );
 
-      case 'user-management':
-        return (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        );
       case 'logs':
         return (
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -718,7 +709,6 @@ const UnifiedOperationsPortal: React.FC<IUnifiedOperationsPortalProps> = (props)
   const adminNavItems: { id: ViewKey; label: string }[] = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'applications', label: 'Applications' },
-    { id: 'user-management', label: 'User Management' },
     { id: 'logs', label: 'Logs' }
   ];
 
@@ -745,13 +735,11 @@ const UnifiedOperationsPortal: React.FC<IUnifiedOperationsPortalProps> = (props)
     if (pathname === '/applications') currentView = 'applications';
     else if (pathname === '/profile') currentView = 'profile';
     else if (pathname === '/logs') currentView = 'logs';
-    else if (pathname === '/user-management') currentView = 'user-management';
 
     const allLabels: Record<ViewKey, string> = {
       'dashboard': 'Dashboard',
       'applications': 'Applications',
       'profile': 'Profile',
-      'user-management': 'User Management',
       'logs': 'Logs'
     };
 
@@ -939,11 +927,6 @@ const UnifiedOperationsPortal: React.FC<IUnifiedOperationsPortalProps> = (props)
               </AdminRoute>
             } />
 
-            <Route path="/user-management" element={
-              <AdminRoute userAccess={userAccess}>
-                <UserManagement currentUserEmail={userEmail} currentUserDisplayName={userDisplayName} />
-              </AdminRoute>
-            } />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

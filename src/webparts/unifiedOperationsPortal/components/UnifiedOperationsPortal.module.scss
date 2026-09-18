@@ -737,15 +737,6 @@
   }
 }
 
-@keyframes rotateGlowAround {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
 .showcaseCard {
   background-color: #ffffff;
   border-radius: 12px;
@@ -757,66 +748,12 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.015);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 320%;
-    height: 320%;
-    transform: translate(-50%, -50%) rotate(0deg);
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      transparent 50deg,
-      rgba(124, 58, 237, 0.35) 80deg,
-      #7C3AED 110deg,
-      #D946EF 140deg,
-      #F43F5E 160deg,
-      #D946EF 180deg,
-      #7C3AED 210deg,
-      rgba(124, 58, 237, 0.35) 240deg,
-      transparent 270deg,
-      transparent 360deg
-    );
-    opacity: 0;
-    transition: opacity 0.35s ease;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 1.5px;
-    border-radius: 10.5px;
-    background-color: #ffffff;
-    pointer-events: none;
-    z-index: 2;
-    transition: all 0.35s ease;
-  }
+  transition: all 0.25s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    border-color: transparent;
-    box-shadow:
-      0 0 2px 1px rgba(217, 70, 239, 0.35),
-      0 14px 32px -4px rgba(124, 58, 237, 0.22),
-      0 0 20px 2px rgba(217, 70, 239, 0.18);
-
-    &::before {
-      opacity: 1;
-      animation: rotateGlowAround 2.8s linear infinite;
-    }
-
-    &::after {
-      background-image:
-        radial-gradient(circle at 90% 90%, rgba(217, 70, 239, 0.12) 0%, rgba(124, 58, 237, 0.06) 40%, transparent 70%),
-        radial-gradient(circle, rgba(168, 85, 247, 0.18) 1px, transparent 1px);
-      background-size: 100% 100%, 14px 14px;
-    }
+    transform: translateY(-3px);
+    border-color: #7C3AED;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.12);
   }
 }
 
@@ -1132,66 +1069,12 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.015);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 320%;
-    height: 320%;
-    transform: translate(-50%, -50%) rotate(0deg);
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      transparent 50deg,
-      rgba(124, 58, 237, 0.35) 80deg,
-      #7C3AED 110deg,
-      #D946EF 140deg,
-      #F43F5E 160deg,
-      #D946EF 180deg,
-      #7C3AED 210deg,
-      rgba(124, 58, 237, 0.35) 240deg,
-      transparent 270deg,
-      transparent 360deg
-    );
-    opacity: 0;
-    transition: opacity 0.35s ease;
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 1.5px;
-    border-radius: 10.5px;
-    background-color: #ffffff;
-    pointer-events: none;
-    z-index: 2;
-    transition: all 0.35s ease;
-  }
+  transition: all 0.25s ease;
 
   &:hover {
-    transform: translateY(-4px);
-    border-color: transparent;
-    box-shadow:
-      0 0 2px 1px rgba(217, 70, 239, 0.35),
-      0 14px 32px -4px rgba(124, 58, 237, 0.22),
-      0 0 20px 2px rgba(217, 70, 239, 0.18);
-
-    &::before {
-      opacity: 1;
-      animation: rotateGlowAround 2.8s linear infinite;
-    }
-
-    &::after {
-      background-image:
-        radial-gradient(circle at 90% 90%, rgba(217, 70, 239, 0.12) 0%, rgba(124, 58, 237, 0.06) 40%, transparent 70%),
-        radial-gradient(circle, rgba(168, 85, 247, 0.18) 1px, transparent 1px);
-      background-size: 100% 100%, 14px 14px;
-    }
+    transform: translateY(-3px);
+    border-color: #7C3AED;
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.12);
   }
 }
 
@@ -1888,46 +1771,10 @@
     border-color: #1F1F23;
     box-shadow: none;
 
-    &::before {
-      background: conic-gradient(
-        from 0deg,
-        transparent 0deg,
-        transparent 40deg,
-        rgba(124, 58, 237, 0.4) 70deg,
-        #7C3AED 100deg,
-        #D946EF 135deg,
-        #F43F5E 160deg,
-        #D946EF 185deg,
-        #7C3AED 215deg,
-        rgba(124, 58, 237, 0.4) 240deg,
-        transparent 270deg,
-        transparent 360deg
-      );
-    }
-
-    &::after {
-      background-color: #111111;
-    }
-
     &:hover {
-      transform: translateY(-4px);
-      border-color: transparent;
-      box-shadow:
-        0 0 2px 1px rgba(217, 70, 239, 0.65),
-        0 16px 36px -4px rgba(124, 58, 237, 0.5),
-        0 0 28px 4px rgba(217, 70, 239, 0.4);
-
-      &::before {
-        opacity: 1;
-        animation: rotateGlowAround 2.5s linear infinite;
-      }
-
-      &::after {
-        background-image:
-          radial-gradient(circle at 90% 95%, rgba(217, 70, 239, 0.25) 0%, rgba(124, 58, 237, 0.16) 40%, transparent 70%),
-          radial-gradient(circle, rgba(168, 85, 247, 0.35) 1px, transparent 1px);
-        background-size: 100% 100%, 14px 14px;
-      }
+      transform: translateY(-3px);
+      border-color: #7C3AED;
+      box-shadow: 0 4px 18px rgba(124, 58, 237, 0.22);
     }
   }
 
@@ -2035,52 +1882,15 @@
     color: #71717A;
   }
 
-  // User Showcase Card (Grid View)
   .userShowcaseCard {
     background-color: #111111;
     border-color: #1F1F23;
     box-shadow: none;
 
-    &::before {
-      background: conic-gradient(
-        from 0deg,
-        transparent 0deg,
-        transparent 40deg,
-        rgba(124, 58, 237, 0.4) 70deg,
-        #7C3AED 100deg,
-        #D946EF 135deg,
-        #F43F5E 160deg,
-        #D946EF 185deg,
-        #7C3AED 215deg,
-        rgba(124, 58, 237, 0.4) 240deg,
-        transparent 270deg,
-        transparent 360deg
-      );
-    }
-
-    &::after {
-      background-color: #111111;
-    }
-
     &:hover {
-      transform: translateY(-4px);
-      border-color: transparent;
-      box-shadow:
-        0 0 2px 1px rgba(217, 70, 239, 0.65),
-        0 16px 36px -4px rgba(124, 58, 237, 0.5),
-        0 0 28px 4px rgba(217, 70, 239, 0.4);
-
-      &::before {
-        opacity: 1;
-        animation: rotateGlowAround 2.5s linear infinite;
-      }
-
-      &::after {
-        background-image:
-          radial-gradient(circle at 90% 95%, rgba(217, 70, 239, 0.25) 0%, rgba(124, 58, 237, 0.16) 40%, transparent 70%),
-          radial-gradient(circle, rgba(168, 85, 247, 0.35) 1px, transparent 1px);
-        background-size: 100% 100%, 14px 14px;
-      }
+      transform: translateY(-3px);
+      border-color: #7C3AED;
+      box-shadow: 0 4px 18px rgba(124, 58, 237, 0.22);
     }
   }
 
