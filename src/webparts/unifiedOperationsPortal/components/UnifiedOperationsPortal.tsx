@@ -13,7 +13,6 @@ import { IApplicationWithUsers, IAppCategory, AppCategory } from '../../../Types
 import { getApplications, getApplicationsForUser } from '../../../Service/ApplicationService';
 import { getAppCategories } from '../../../Service/CategoryService';
 import { getADUsers } from '../../../Service/ADUsersService';
-import UserProfile from './UserProfile/UserProfile';
 import {
   getUserPreferences,
   saveUserPreferences,
@@ -27,7 +26,7 @@ import {
 import STTGDCLogoFull from '../assets/STTGDC_Logo_Full.png';
 import STTGDCLogoWhite from '../assets/STTGDC_Logo_White.png';
 
-type ViewKey = 'dashboard' | 'applications' | 'profile' | 'logs';
+type ViewKey = 'dashboard' | 'applications' | 'logs';
 
 const getInitialLoginTime = (): string => {
   let storedLoginTime = sessionStorage.getItem('UOP_Session_LoginTime');
@@ -324,13 +323,7 @@ const UnifiedOperationsPortal: React.FC<IUnifiedOperationsPortalProps> = (props)
             <rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" />
           </svg>
         );
-      case 'profile':
-        return (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
-        );
+
 
       case 'logs':
         return (
@@ -702,8 +695,7 @@ const UnifiedOperationsPortal: React.FC<IUnifiedOperationsPortalProps> = (props)
 
   const userNavItems: { id: ViewKey; label: string }[] = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'applications', label: 'Applications' },
-    { id: 'profile', label: 'Profile' }
+    { id: 'applications', label: 'Applications' }
   ];
 
   const adminNavItems: { id: ViewKey; label: string }[] = [
@@ -733,13 +725,11 @@ const UnifiedOperationsPortal: React.FC<IUnifiedOperationsPortalProps> = (props)
     const pathname = location.pathname;
     let currentView: ViewKey = 'dashboard';
     if (pathname === '/applications') currentView = 'applications';
-    else if (pathname === '/profile') currentView = 'profile';
     else if (pathname === '/logs') currentView = 'logs';
 
     const allLabels: Record<ViewKey, string> = {
       'dashboard': 'Dashboard',
       'applications': 'Applications',
-      'profile': 'Profile',
       'logs': 'Logs'
     };
 
@@ -905,22 +895,7 @@ const UnifiedOperationsPortal: React.FC<IUnifiedOperationsPortalProps> = (props)
 
 
 
-            <Route path="/profile" element={
-              <UserProfile
-                userDisplayName={currentUserName}
-                userEmail={currentUserEmail}
-                userRole={userAccess}
-                loginTime={loginTime}
-                favoriteAppIds={favoriteAppIds}
-                recentAppIds={recentAppIds}
-                mostUsedAppsRaw={mostUsedAppsRaw}
-                applications={applications}
-                categories={categories}
-                isDarkMode={isDarkMode}
-                onToggleFavorite={toggleFavorite}
-                onLaunchApp={launchUserApp}
-              />
-            } />
+
             <Route path="/logs" element={
               <AdminRoute userAccess={userAccess}>
                 <AuditLogs />
